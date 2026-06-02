@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Global Social Dashboard · WorldFirst</title>
+<style>
+:root { --ink-0:#111; --ink-1:#444; --ink-2:#777; --ink-3:#aaa; --line:#e7e7e7; --bg:#fff; --bg-2:#fafafa; }
+* { box-sizing: border-box; }
+body { font: 14px/1.5 -apple-system, BlinkMacSystemFont, "Inter", system-ui, sans-serif; color: var(--ink-0); background: var(--bg); margin: 0; padding: 48px 32px 80px; max-width: 1280px; margin-left: auto; margin-right: auto; }
+body.locked #content { filter: blur(20px); pointer-events: none; }
+h1 { font-size: 28px; font-weight: 600; letter-spacing: -0.015em; margin: 0 0 6px; }
+.tagline { color: var(--ink-2); font-size: 14px; margin-bottom: 8px; }
+.meta { color: var(--ink-2); font-size: 13px; margin-bottom: 24px; }
+.meta b { color: var(--ink-1); font-weight: 500; }
+h2 { font-size: 16px; font-weight: 600; margin: 40px 0 12px; letter-spacing: -0.005em; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); }
+th { font-weight: 500; color: var(--ink-1); font-size: 11px; letter-spacing: 0.04em; text-transform: uppercase; }
+td.num { text-align: right; font-variant-numeric: tabular-nums; font-family: "JetBrains Mono", ui-monospace, monospace; font-size: 12.5px; }
+tr.total-row { border-top: 2px solid var(--ink-0); background: var(--bg-2); }
+tr.total-row td { font-weight: 600; }
+tr.recent { background: #fcfcfc; }
+.month-cell { font-weight: 500; }
+.er-cell { color: var(--ink-1); }
+.definition { margin-top: 32px; border: 1px solid var(--line); border-radius: 6px; font-size: 12.5px; color: var(--ink-1); line-height: 1.7; }
+.definition > summary { cursor: pointer; padding: 12px 20px; font-weight: 600; color: var(--ink-0); list-style: none; display: flex; justify-content: space-between; align-items: center; }
+.definition > summary::-webkit-details-marker { display: none; }
+.definition[open] > summary { border-bottom: 1px solid var(--line); }
+.definition[open] .def-chev { transform: rotate(180deg); }
+.def-chev { transition: transform 0.15s; color: var(--ink-2); font-size: 11px; }
+.def-body { padding: 14px 20px 16px; }
+.definition b { color: var(--ink-0); font-weight: 600; }
+.definition code { font: 11.5px ui-monospace, monospace; background: var(--bg-2); padding: 1px 6px; border-radius: 3px; }
+.filter-note { display: inline-block; padding: 6px 12px; background: var(--bg-2); border-radius: 4px; font-size: 12px; color: var(--ink-1); margin-bottom: 24px; }
+hr { border: 0; border-top: 1px solid var(--line); margin: 32px 0 0; }
+
+.page-head { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 4px; gap: 16px; }
+.shortcut { color: var(--ink-1); font-size: 13px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 5px; text-decoration: none; white-space: nowrap; transition: border-color 0.15s; }
+.shortcut:hover { border-color: var(--ink-0); color: var(--ink-0); }
+
+.chart-wrap { margin: 28px 0 8px; }
+.line-chart { display: block; width: 100%; height: auto; }
+.legend { display: flex; gap: 24px; margin-top: 12px; padding-left: 60px; font-size: 12px; color: var(--ink-1); }
+.legend-item { display: inline-flex; align-items: center; gap: 8px; }
+.swatch { width: 12px; height: 12px; border-radius: 2px; display: inline-block; }
+
+.hero-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 32px 0 16px; }
+.hero-card { padding: 20px 22px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.hero-num { font-size: 32px; font-weight: 600; letter-spacing: -0.02em; color: var(--ink-0); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.hero-pct { font-size: 16px; color: var(--ink-2); font-weight: 500; }
+.hero-label { font-size: 12px; color: var(--ink-1); margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em; }
+.hero-sub { font-size: 12px; color: var(--ink-2); margin-top: 4px; }
+
+#gate { position: fixed; inset: 0; background: rgba(255,255,255,0.92); backdrop-filter: blur(8px); display: flex; align-items: center; justify-content: center; z-index: 100; }
+#gate-card { background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 32px 36px; max-width: 320px; text-align: center; box-shadow: 0 8px 32px rgba(0,0,0,0.05); }
+#gate-card h2 { font-size: 20px; margin: 0 0 4px; letter-spacing: -0.01em; }
+#gate-card .gate-sub { color: var(--ink-2); font-size: 13px; margin-bottom: 20px; }
+#gate-form { display: flex; gap: 8px; }
+#gate-input { flex: 1; padding: 9px 12px; border: 1px solid var(--line); border-radius: 5px; font-size: 14px; font-family: inherit; }
+#gate-input:focus { outline: none; border-color: var(--ink-0); }
+#gate-btn { padding: 9px 16px; background: var(--ink-0); color: var(--bg); border: none; border-radius: 5px; font-size: 13px; font-weight: 500; cursor: pointer; }
+#gate-btn:hover { opacity: 0.85; }
+#gate-err { color: #c00; font-size: 12px; min-height: 16px; margin-top: 10px; }
+
+.tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin: 0 0 20px; }
+.tab-btn { appearance: none; background: transparent; border: 0; border-bottom: 2px solid transparent; color: var(--ink-2); font-family: inherit; font-size: 14px; font-weight: 500; padding: 12px 18px; cursor: pointer; margin-bottom: -1px; transition: color 0.1s, border-color 0.1s; text-decoration: none; display: inline-block; }
+.tab-btn:hover { color: var(--ink-0); }
+.tab-btn.active { color: var(--ink-0); border-bottom-color: var(--ink-0); font-weight: 600; }
+.tab-link { margin-left: auto; }
+.tabs { align-items: stretch; }
+
+.viral-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin-bottom: 12px; }
+.viral-card { display: flex; flex-direction: column; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; background: var(--bg); text-decoration: none; color: inherit; transition: border-color 0.1s; }
+.viral-card:hover { border-color: var(--ink-0); }
+.viral-thumb { aspect-ratio: 9/16; background: var(--bg-2); overflow: hidden; }
+.viral-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.viral-thumb-placeholder { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 24px; }
+.viral-meta { padding: 12px 14px; }
+.viral-kol { font-size: 12px; color: var(--ink-2); margin-bottom: 6px; font-weight: 500; }
+.viral-title { font-size: 13px; color: var(--ink-0); line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.viral-stats { font-size: 11px; color: var(--ink-2); font-family: 'JetBrains Mono', ui-monospace, monospace; }
+.tab-pane { display: none; }
+.tab-pane.active { display: block; }
+</style>
+</head><body class="locked">
+<div id="gate">
+  <div id="gate-card">
+    <h2>Global Social Dashboard</h2>
+    <div class="gate-sub">WorldFirst content views · 2026 YTD</div>
+    <form id="gate-form" onsubmit="return gateSubmit(event)">
+      <input id="gate-input" type="password" placeholder="password" autocomplete="off" autofocus>
+      <button id="gate-btn" type="submit">Enter</button>
+    </form>
+    <div id="gate-err"></div>
+  </div>
+</div>
+<div id="content" hidden></div>
+<script type="application/json" id="payload">{"v": 1, "salt": "mbUtuSycCh68kQpi++BuZw==", "iv": "Yz1EZuA31ysDC2VW", "iterations": 100000, "ciphertext": "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"}</script>
+<script>
+function b64ToBytes(b64) { const bin = atob(b64); const bytes = new Uint8Array(bin.length); for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i); return bytes; }
+async function deriveKey(password, salt, iterations) {
+  const enc = new TextEncoder();
+  const baseKey = await crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations, hash: "SHA-256" }, baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+}
+async function decryptPayload(password) {
+  const blob = JSON.parse(document.getElementById('payload').textContent);
+  const salt = b64ToBytes(blob.salt); const iv = b64ToBytes(blob.iv); const ct = b64ToBytes(blob.ciphertext);
+  const key = await deriveKey(password, salt, blob.iterations);
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv }, key, ct);
+  return new TextDecoder().decode(plain);
+}
+async function gateSubmit(e) {
+  e.preventDefault();
+  const inp = document.getElementById('gate-input'); const err = document.getElementById('gate-err'); err.textContent = '';
+  try {
+    const innerHtml = await decryptPayload(inp.value);
+    document.getElementById('content').innerHTML = innerHtml;
+    document.getElementById('content').hidden = false;
+    document.getElementById('gate').style.display = 'none';
+    document.body.classList.remove('locked');
+    try { localStorage.setItem('monthly_pw', inp.value); } catch (_) {}
+  } catch (ex) { err.textContent = 'wrong password'; inp.value = ''; inp.focus(); }
+  return false;
+}
+(async () => {
+  try {
+    const cached = localStorage.getItem('monthly_pw');
+    if (cached) {
+      const innerHtml = await decryptPayload(cached);
+      document.getElementById('content').innerHTML = innerHtml;
+      document.getElementById('content').hidden = false;
+      document.getElementById('gate').style.display = 'none';
+      document.body.classList.remove('locked');
+    }
+  } catch (_) { try { localStorage.removeItem('monthly_pw'); } catch (_) {} }
+})();
+function switchTab(btn) {
+  const target = btn.getAttribute('data-target');
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b === btn));
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.toggle('active', p.id === target));
+  try { localStorage.setItem('monthly_tab', target); } catch (_) {}
+}
+// Restore last-selected tab after decrypt
+const restoreTab = () => { try { const t = localStorage.getItem('monthly_tab'); if (t) { const b = document.querySelector(`.tab-btn[data-target="${t}"]`); if (b) switchTab(b); } } catch (_) {} };
+// Hook into existing decrypt flow — run after content fills
+const _origGate = gateSubmit;
+gateSubmit = async function(e) { const r = await _origGate(e); setTimeout(restoreTab, 50); return r; };
+setTimeout(restoreTab, 200);  // also handle the autologin path
+</script>
+</body></html>
